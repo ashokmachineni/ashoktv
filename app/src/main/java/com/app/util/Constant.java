@@ -90,5 +90,5 @@ public class Constant implements Serializable {
     public static boolean isBanner = false, isInterstitial = false;
     public static String adMobBannerId, adMobInterstitialId, adMobPublisherId;
 
-
+    public static final String AdMobID = "ca-app-pub-3940256099942544/5224354917";
 }
