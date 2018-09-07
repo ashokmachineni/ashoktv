@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ashokui.ChannelDetailsActivity;
+import com.app.ashokui.MainActivity;
 import com.app.ashokui.R;
 import com.app.item.ItemChannel;
 import com.app.util.PopUpAds;
@@ -51,10 +52,13 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Item
         holder.lyt_parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopUpAds.ShowInterstitialAds(mContext);
-                Intent intent = new Intent(mContext, ChannelDetailsActivity.class);
-                intent.putExtra("Id", singleItem.getId());
-                mContext.startActivity(intent);
+//                PopUpAds.ShowInterstitialAds(mContext);
+                if (mContext instanceof MainActivity) {
+                    ((MainActivity) mContext).showRewardedVideoAd();
+                }
+//                Intent intent = new Intent(mContext, ChannelDetailsActivity.class);
+//                intent.putExtra("Id", singleItem.getId());
+//                mContext.startActivity(intent);
             }
         });
     }

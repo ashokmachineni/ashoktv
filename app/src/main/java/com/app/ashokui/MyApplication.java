@@ -153,11 +153,11 @@ public class MyApplication extends Application {
                 isExternalLink = data.optString("external_link", null);
                 if (customKey != null) {
                     if (!customKey.equals("0")) {
-                        Intent intent = new Intent(MyApplication.this, ChannelDetailsActivity.class);
-                        intent.putExtra("Id", customKey);
-                        intent.putExtra("isNotification", true);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+//                        Intent intent = new Intent(MyApplication.this, ChannelDetailsActivity.class);
+//                        intent.putExtra("Id", customKey);
+//                        intent.putExtra("isNotification", true);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
                     } else {
                         if (!isExternalLink.equals("false")) {
                             Intent intent = new Intent(Intent.ACTION_VIEW,
