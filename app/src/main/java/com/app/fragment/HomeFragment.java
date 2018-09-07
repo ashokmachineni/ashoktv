@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 
 import com.app.adapter.CategoryAdapter;
 import com.app.adapter.ChannelAdapter;
-import com.app.adapter.SliderAdapter;
 import com.app.ashokui.MainActivity;
 import com.app.ashokui.R;
 import com.app.item.ItemCategory;
@@ -39,7 +37,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
-import me.relex.circleindicator.CircleIndicator;
 
 /**
  * Created by laxmi.
@@ -49,11 +46,11 @@ public class HomeFragment extends Fragment {
 
     ArrayList<ItemChannel> mSliderList, mLatestList;
     ArrayList<ItemCategory> mCategoryList;
-    SliderAdapter sliderAdapter;
+//    SliderAdapter sliderAdapter;
     ScrollView mScrollView;
     ProgressBar mProgressBar;
-    ViewPager mViewPager;
-    CircleIndicator circleIndicator;
+//    ViewPager mViewPager;
+//    CircleIndicator circleIndicator;
     RecyclerView rvLatest, rvCategory;
     Button btnMoreLatest, btnMoreCategory;
     ChannelAdapter channelAdapter;
@@ -70,8 +67,8 @@ public class HomeFragment extends Fragment {
         lyt_not_found = rootView.findViewById(R.id.lyt_not_found);
         mScrollView = rootView.findViewById(R.id.scrollView);
         mProgressBar = rootView.findViewById(R.id.progressBar);
-        mViewPager = rootView.findViewById(R.id.viewPager);
-        circleIndicator = rootView.findViewById(R.id.indicator_unselected_background);
+//        mViewPager = rootView.findViewById(R.id.viewPager);
+//        circleIndicator = rootView.findViewById(R.id.indicator_unselected_background);
         rvLatest = rootView.findViewById(R.id.rv_latest);
         rvCategory = rootView.findViewById(R.id.rv_category);
         btnMoreLatest = rootView.findViewById(R.id.btn_latest);
@@ -231,9 +228,9 @@ public class HomeFragment extends Fragment {
 
 
     private void displayData() {
-        sliderAdapter = new SliderAdapter(requireActivity(), mSliderList);
-        mViewPager.setAdapter(sliderAdapter);
-        circleIndicator.setViewPager(mViewPager);
+//        sliderAdapter = new SliderAdapter(requireActivity(), mSliderList);
+//        mViewPager.setAdapter(sliderAdapter);
+//        circleIndicator.setViewPager(mViewPager);
 
         channelAdapter = new ChannelAdapter(getActivity(), mLatestList, R.layout.row_home_channel_item);
         rvLatest.setAdapter(channelAdapter);
