@@ -52,9 +52,9 @@ public class FavouriteAdapter extends RecyclerView.Adapter<FavouriteAdapter.Item
             @Override
             public void onClick(View v) {
                 PopUpAds.ShowInterstitialAds(mContext);
-                Intent intent = new Intent(mContext, ChannelDetailsActivity.class);
-                intent.putExtra("Id", singleItem.getId());
-                mContext.startActivity(intent);
+//                Intent intent = new Intent(mContext, ChannelDetailsActivity.class);
+//                intent.putExtra("Id", singleItem.getId());
+//                mContext.startActivity(intent);
             }
         });
     }

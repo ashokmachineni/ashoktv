@@ -46,9 +46,9 @@ public class RelatedAdapter extends RecyclerView.Adapter<RelatedAdapter.ItemRowH
         holder.lyt_parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ChannelDetailsActivity.class);
-                intent.putExtra("Id", singleItem.getId());
-                mContext.startActivity(intent);
+//                Intent intent = new Intent(mContext, ChannelDetailsActivity.class);
+//                intent.putExtra("Id", singleItem.getId());
+//                mContext.startActivity(intent);
             }
         });
     }
