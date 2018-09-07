@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         MyApp.saveIsLogin(false);
-                        Intent intent = new Intent(getApplicationContext(), IntroActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
