@@ -1,5 +1,6 @@
 package com.app.ashokui;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,10 +37,12 @@ import com.app.fragment.HomeFragment;
 import com.app.fragment.LatestFragment;
 import com.app.fragment.SearchFragment;
 import com.app.fragment.VideoFragment;
+import com.app.item.ItemChannel;
 import com.app.item.ItemNav;
 import com.app.util.BannerAds;
 import com.app.util.Constant;
 import com.app.util.IsRTL;
+import com.app.util.MediaPlayer;
 import com.app.util.NetworkUtils;
 import com.app.util.RecyclerTouchListener;
 import com.google.android.gms.ads.AdRequest;
@@ -50,6 +53,7 @@ import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.ixidev.gdpr.GDPRChecker;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
     int previousSelect = 0;
     boolean doubleBackToExitPressedOnce = false;
     LinearLayout mAdViewLayout;
+    ProgressDialog pDialog;
+    String mChannelId;
+    boolean mRewarded = false;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -115,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
         mRewardedVideoAd.setRewardedVideoAdListener(this);
         loadRewardedVideoAd();
+
+        pDialog = new ProgressDialog(this);
 
         IsRTL.ifSupported(MainActivity.this);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -286,10 +296,10 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
         if (MyApp.getIsLogin()) {
             mNavItem.add(new ItemNav(10, R.drawable.ic_profile, getResources().getString(R.string.menu_profile)));
             mNavItem.add(new ItemNav(11, R.drawable.ic_logout, getResources().getString(R.string.menu_logout)));
-        } else {
-            mNavItem.add(new ItemNav(12, R.drawable.ic_login, getResources().getString(R.string.login)));
         }
-
+//        else {
+//            mNavItem.add(new ItemNav(12, R.drawable.ic_login, getResources().getString(R.string.login)));
+//        }
     }
 
     @Override
@@ -439,7 +449,8 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
         mRewardedVideoAd.loadAd(Constant.AdMobID, new AdRequest.Builder().build());
     }
 
-    public void showRewardedVideoAd() {
+    public void showRewardedVideoAd(String channelId) {
+        mChannelId = channelId;
         if (mRewardedVideoAd.isLoaded()) {
             mRewardedVideoAd.show();
         }
@@ -449,7 +460,8 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
     public void onRewarded(RewardItem reward) {
 //        Toast.makeText(this, "onRewarded! currency: " + reward.getType() + "  amount: " +
 //                reward.getAmount(), Toast.LENGTH_SHORT).show();
-        // Reward the user.
+//         Reward the user.
+        mRewarded = true;
     }
 
     @Override
@@ -460,6 +472,11 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
     @Override
     public void onRewardedVideoAdClosed() {
 //        Toast.makeText(this, "onRewardedVideoAdClosed", Toast.LENGTH_SHORT).show();
+
+        if (mRewarded) {
+            getChannelDetails();
+        }
+        mRewarded = false;
         loadRewardedVideoAd();
     }
 
@@ -486,5 +503,64 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
     @Override
     public void onRewardedVideoCompleted() {
 //        Toast.makeText(this, "onRewardedVideoCompleted", Toast.LENGTH_SHORT).show();
+    }
+
+    public void showProgressDialog() {
+        pDialog.setMessage(getString(R.string.loading));
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(true);
+        pDialog.show();
+    }
+
+    public void dismissProgressDialog() {
+        pDialog.dismiss();
+    }
+
+    private void getChannelDetails() {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("get_single_channel_id", mChannelId);
+        client.get(Constant.API_URL, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                super.onStart();
+                showProgressDialog();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                dismissProgressDialog();
+
+                ItemChannel objBean = new ItemChannel();
+                String result = new String(responseBody);
+                try {
+                    JSONObject mainJson = new JSONObject(result);
+                    JSONArray jsonArray = mainJson.getJSONArray(Constant.ARRAY_NAME);
+                    if (jsonArray.length() > 0) {
+                        JSONObject objJson;
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            objJson = jsonArray.getJSONObject(i);
+                            objBean.setId(objJson.getString(Constant.CHANNEL_ID));
+                            objBean.setChannelName(objJson.getString(Constant.CHANNEL_TITLE));
+                            objBean.setChannelCategory(objJson.getString(Constant.CATEGORY_NAME));
+                            objBean.setImage(objJson.getString(Constant.CHANNEL_IMAGE));
+                            objBean.setChannelAvgRate(objJson.getString(Constant.CHANNEL_AVG_RATE));
+                            objBean.setDescription(objJson.getString(Constant.CHANNEL_DESC));
+                            objBean.setChannelUrl(objJson.getString(Constant.CHANNEL_URL));
+                            objBean.setIsTv(objJson.getString(Constant.CHANNEL_TYPE).equals("live_url"));
+                        }
+                        new MediaPlayer(MainActivity.this).playVideo(objBean);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                dismissProgressDialog();
+            }
+
+        });
     }
 }
