@@ -65,9 +65,9 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ItemRowH
             @Override
             public void onClick(View v) {
 //                PopUpAds.ShowInterstitialAds(mContext);
-                Log.d("ChannelUrl", singleItem.getChannelUrl());
+//                Log.d("ChannelUrl", singleItem.getChannelUrl());
                 if (mContext instanceof MainActivity) {
-                    ((MainActivity) mContext).showRewardedVideoAd(singleItem.getId());
+                    ((MainActivity) mContext).openAd(singleItem.getId());
                 }
 //                Intent intent = new Intent(mContext, ChannelDetailsActivity.class);
 //                intent.putExtra("Id", singleItem.getId());

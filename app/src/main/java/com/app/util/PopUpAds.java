@@ -3,6 +3,7 @@ package com.app.util;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.app.ashokui.MainActivity;
 import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -11,7 +12,7 @@ import com.ixidev.gdpr.GDPRChecker;
 
 public class PopUpAds {
 
-    public static void ShowInterstitialAds(Context context) {
+    public static void ShowInterstitialAds(final Context context) {
         if (Constant.isInterstitial) {
             Constant.AD_COUNT += 1;
             if (Constant.AD_COUNT == Constant.AD_COUNT_SHOW) {
@@ -42,6 +43,14 @@ public class PopUpAds {
                     public void onAdLoaded() {
                         super.onAdLoaded();
                         mInterstitial.show();
+                    }
+
+                    @Override
+                    public void onAdClosed() {
+                        super.onAdClosed();
+                        if (context instanceof MainActivity) {
+                            ((MainActivity)context).getChannelDetailsAndPlay();
+                        }
                     }
                 });
             }

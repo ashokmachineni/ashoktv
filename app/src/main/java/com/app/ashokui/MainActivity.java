@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,7 @@ import com.app.util.Constant;
 import com.app.util.IsRTL;
 import com.app.util.MediaPlayer;
 import com.app.util.NetworkUtils;
+import com.app.util.PopUpAds;
 import com.app.util.RecyclerTouchListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
@@ -364,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
                     Constant.adMobBannerId = objJson.getString("banner_ad_id");
                     Constant.adMobInterstitialId = objJson.getString("interstital_ad_id");
                     Constant.adMobPublisherId = objJson.getString("publisher_id");
-                    Constant.AD_COUNT_SHOW = objJson.getInt("interstital_ad_click");
+                    Constant.AD_COUNT_SHOW = 1; //objJson.getInt("interstital_ad_click");
 
                     new GDPRChecker()
                             .withContext(MainActivity.this)
@@ -449,32 +451,27 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
         mRewardedVideoAd.loadAd(Constant.AdMobID, new AdRequest.Builder().build());
     }
 
-    public void showRewardedVideoAd(String channelId) {
+    public void openAd(String channelId) {
         mChannelId = channelId;
         if (mRewardedVideoAd.isLoaded()) {
             mRewardedVideoAd.show();
+        } else {
+            PopUpAds.ShowInterstitialAds(this);
         }
     }
 
     @Override
     public void onRewarded(RewardItem reward) {
-//        Toast.makeText(this, "onRewarded! currency: " + reward.getType() + "  amount: " +
-//                reward.getAmount(), Toast.LENGTH_SHORT).show();
-//         Reward the user.
         mRewarded = true;
     }
 
     @Override
-    public void onRewardedVideoAdLeftApplication() {
-//        Toast.makeText(this, "onRewardedVideoAdLeftApplication", Toast.LENGTH_SHORT).show();
-    }
+    public void onRewardedVideoAdLeftApplication() { }
 
     @Override
     public void onRewardedVideoAdClosed() {
-//        Toast.makeText(this, "onRewardedVideoAdClosed", Toast.LENGTH_SHORT).show();
-
         if (mRewarded) {
-            getChannelDetails();
+            getChannelDetailsAndPlay();
         }
         mRewarded = false;
         loadRewardedVideoAd();
@@ -482,28 +479,20 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
 
     @Override
     public void onRewardedVideoAdFailedToLoad(int errorCode) {
-//        Toast.makeText(this, "onRewardedVideoAdFailedToLoad", Toast.LENGTH_SHORT).show();
+        PopUpAds.ShowInterstitialAds(this);
     }
 
     @Override
-    public void onRewardedVideoAdLoaded() {
-//        Toast.makeText(this, "onRewardedVideoAdLoaded", Toast.LENGTH_SHORT).show();
-    }
+    public void onRewardedVideoAdLoaded() { }
 
     @Override
-    public void onRewardedVideoAdOpened() {
-//        Toast.makeText(this, "onRewardedVideoAdOpened", Toast.LENGTH_SHORT).show();
-    }
+    public void onRewardedVideoAdOpened() { }
 
     @Override
-    public void onRewardedVideoStarted() {
-//        Toast.makeText(this, "onRewardedVideoStarted", Toast.LENGTH_SHORT).show();
-    }
+    public void onRewardedVideoStarted() { }
 
     @Override
-    public void onRewardedVideoCompleted() {
-//        Toast.makeText(this, "onRewardedVideoCompleted", Toast.LENGTH_SHORT).show();
-    }
+    public void onRewardedVideoCompleted() { }
 
     public void showProgressDialog() {
         pDialog.setMessage(getString(R.string.loading));
@@ -516,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
         pDialog.dismiss();
     }
 
-    private void getChannelDetails() {
+    public void getChannelDetailsAndPlay() {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("get_single_channel_id", mChannelId);
